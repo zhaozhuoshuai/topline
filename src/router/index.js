@@ -5,7 +5,7 @@ import ElementUI from 'element-ui'
 // import Home from '/views/home'
 Vue.use(ElementUI)
 Vue.use(VueRouter)
-axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn'
 Vue.prototype.$http = axios
 const routes = [
   // import xxx from xxx 模块化导入//完整导入
