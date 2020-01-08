@@ -12,7 +12,18 @@ const routes = [
   // @符号表示绝对路径名地址
   // index.vue是默认索引文件
   { path: '/login', name: 'login', component: () => import('@/views/login') },
-  { path: '/home', name: 'home', component: () => import('@/views/home') }
+  {
+    path: '/home',
+    name: 'home',
+    component: () => import('@/views/home'),
+    redirect: '/welcome', // 重定向
+    children: [
+      { path: '/welcome', name: 'welcome', component: () => import('@/views/welcome') },
+      { path: '/article', name: 'article', component: () => import('@/views/article') }
+    ]
+
+  }
+
 ]
 const router = new VueRouter({
   routes
