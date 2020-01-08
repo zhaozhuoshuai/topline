@@ -14,12 +14,23 @@
         </el-form-item>
         <el-form-item label="频道列表:">
           <el-select v-model="searchForm.channel_id" placeholder="请选择" clearable>
-            <el-option label="html5" value="101"></el-option>
-            <el-option label="css3" value="102"></el-option>
-            <el-option label="JS高级" value="103"></el-option>
+            <el-option
+            v-for="item in channelList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="时间选择:"></el-form-item>
+        <el-form-item label="时间选择:">
+          <el-date-picker
+            v-model="timetotime"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
       </el-form>
     </el-card>
   </div>
@@ -28,14 +39,52 @@
 <script>
 export default {
   name: 'Article',
-  data () {
-    return {
-      searchForm: {
-        channel_id: '',
-        status: ''
+  watch: {
+    // 被检测的成员:function(newV,oldV)
+    // newV:数据变化后的样子
+    // oldV:数据变化前的样子
+    timetotime: function (newV, oldV) {
+      if (newV) {
+        this.searchForm.begin_pubdate = newV[0]
+        this.searchForm.end_pubdate = newV[1]
+      } else {
+        this.searchForm.begin_pubdate = ''
+        this.searchForm.end_pubdate = ''
       }
     }
+  },
+  data () {
+    return {
+      channelList: [],
+      timetotime: '', // 时间范围临时接收成员
+      // 检索表单数据对象
+      searchForm: {
+        begin_pubdate: '', // 开始时间
+        end_pubdate: '', // 结束时间
+        channel_id: '', // 频道id
+        status: ''// 文章状态,
+      }
+    }
+  },
+  created () {
+    this.getChannelList()
+  },
+  methods: {
+    getChannelList () {
+      let pro = this.$http({
+        url: '/mp/v1_0/channels',
+        method: 'get'
+      })
+      pro
+        .then(result => {
+          this.channelList = result.data.data.channels
+        })
+        .catch(err => {
+          return this.$message.error('获得频道失败' + err)
+        })
+    }
   }
+
 }
 </script>
 
