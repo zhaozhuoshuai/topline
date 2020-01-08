@@ -11,12 +11,16 @@
           <!-- 放置填写手机号框的闭合标签,里面有html标签 prop会使得校验规则 与 当前项目联系 -->
         <el-form-item prop="mobile">
           <!-- 饿了么组件库的模板 v-model双向绑定mobile  placeholder输入框里面默认内容 -->
-          <el-input v-model="loginForm.mobile" placeholder="请输入手机号码"></el-input>
+          <el-input v-model="loginForm.mobile" placeholder="请输入手机号码">
+          <i slot="prefix" class="iconfont icon-shoujihao"></i>
+          </el-input>
         </el-form-item>
         <!-- 放置填写验证码框的闭合标签,里面有html标签 prop会使得校验规则 与 当前项目联系 -->
         <el-form-item prop="code">
           <!-- 饿了么组件库的模板 v-model双向绑定code  placeholder输入框里面默认内容 -->
-          <el-input v-model="loginForm.code" placeholder="请输入校验码"></el-input>
+          <el-input v-model="loginForm.code" placeholder="请输入校验码">
+          <i slot="prefix" class="iconfont icon-yanzhengma"></i>
+          </el-input>
         </el-form-item>
         <!-- 放置协议的闭合标签  设置了文本靠左    prop会与校验规则联系 -->
         <el-form-item style="text-align:left" prop='xieyi'>
@@ -46,6 +50,7 @@
 <script>
 import './gt.js'// 引入极验人机交互gt.就是文件
 // import { get } from 'http'
+import '@/assets/iconfont/iconfont.css'
 export default {
   data () {
     // 自定义校验函数,验证协议
