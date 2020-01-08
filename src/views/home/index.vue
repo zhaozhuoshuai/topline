@@ -2,17 +2,19 @@
   <!-- element布局容器 -->
   <el-container>
     <!-- 左侧栏 -->
-    <el-aside width="200px">
+    <el-aside :width="isCollapse?'65px':'200px'">
       <el-menu
         background-color="#353B4E"
         text-color="#fff"
         active-text-color="#409EFF"
+        :collapse="isCollapse"
+        :collapse-transition="false"
       >
-      <el-menu-item index="1">
+        <el-menu-item index="1" :style="{width:isCollapse?'65px':'200px'}">
           <i class="el-icon-location"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-submenu index="2">
+        <el-submenu index="2" :style="{width:isCollapse?'65px':'200px'}">
           <template slot="title">
             <i class="el-icon-menu"></i>
             <span>内容管理</span>
@@ -22,11 +24,11 @@
           <el-menu-item index="2-3">评论列表</el-menu-item>
           <el-menu-item index="2-4">素材管理</el-menu-item>
         </el-submenu>
-        <el-menu-item index="3">
+        <el-menu-item index="3" :style="{width:isCollapse?'65px':'200px'}">
           <i class="el-icon-document"></i>
           <span slot="title">粉丝管理</span>
         </el-menu-item>
-        <el-menu-item index="4">
+        <el-menu-item index="4" :style="{width:isCollapse?'65px':'200px'}">
           <i class="el-icon-setting"></i>
           <span slot="title">账户信息</span>
         </el-menu-item>
@@ -36,7 +38,11 @@
       <!-- 头部栏 -->
       <el-header>
         <div class="lt">
-          <i class="el-icon-s-fold"></i>
+          <i
+            slot="prefix"
+            :class="isCollapse?'el-icon-s-unfold':'el-icon-s-fold'"
+            @click="isCollapse=!isCollapse"
+          ></i>
           <span>江苏传智播客教育科技股份有限公司</span>
         </div>
         <div class="rt">
@@ -54,7 +60,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>个人信息</el-dropdown-item>
               <el-dropdown-item>git地址</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
+              <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -77,6 +83,29 @@ export default {
     // 获取账号头像
     photo: function () {
       return JSON.parse(window.sessionStorage.getItem('userinfo')).photo
+    }
+  },
+  data () {
+    return {
+      isCollapse: false // true折叠  false展开
+    }
+  },
+  methods: {
+    // 退出系统
+    logout () {
+      // 确认
+      this.$confirm('确实要退出系统吗?', '退出', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          /// / 清空sessionStorage数据
+          window.sessionStorage.clear()
+          // 导航到登录页面
+          this.$router.push({ name: 'login' })
+        })
+        .catch(() => {})
     }
   }
 }
