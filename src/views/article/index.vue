@@ -55,21 +55,28 @@ export default {
   },
   data () {
     return {
-      channelList: [],
+      articleList: [],
+      tot: 0, // 文章总条数
+      channelList: [], // 频道列表
       timetotime: '', // 时间范围临时接收成员
       // 检索表单数据对象
       searchForm: {
         begin_pubdate: '', // 开始时间
         end_pubdate: '', // 结束时间
         channel_id: '', // 频道id
-        status: ''// 文章状态,
+        status: '' // 文章状态,
+
       }
     }
   },
   created () {
+    // 获得频道
     this.getChannelList()
+    // 获得文章
+    this.getArticleList()
   },
   methods: {
+    // 获取真实频道列表数据
     getChannelList () {
       let pro = this.$http({
         url: '/mp/v1_0/channels',
@@ -81,6 +88,24 @@ export default {
         })
         .catch(err => {
           return this.$message.error('获得频道失败' + err)
+        })
+    },
+    // 获取真实文章信息数据
+    getArticleList () {
+      let pro = this.$http({
+        url: '/mp/v1_0/articles',
+        method: 'get'
+      })
+      pro
+        .then(result => {
+          console.log(result)
+          // data接收文章数据
+          this.articleList = result.data.data.results
+          // 接收总条数
+          this.tot = result.data.data.total_count
+        })
+        .catch(err => {
+          return this.$message.error('获得文章失败' + err)
         })
     }
   }
