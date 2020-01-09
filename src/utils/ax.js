@@ -1,6 +1,7 @@
 import Vue from 'vue'
 // 导入axios模块
 import axios from 'axios'
+import router from '@/router'
 // 配置公共根地址(线上地址)
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 // 配置为Vue的(原型)继承成员
@@ -20,5 +21,16 @@ axios.interceptors.request.use(function (config) {
   }
   return config
 }, function (error) {
+  return Promise.reject(error)
+})
+axios.interceptors.response.use(function (response) {
+  // 正常响应处理
+  return response
+}, function (error) {
+  // 非正常响应处理
+  if (error.response.status === 401) {
+    router.push('/login')
+    return new Promise(function () {})
+  }
   return Promise.reject(error)
 })
