@@ -23,9 +23,12 @@ const routes = [
       { path: '/article', name: 'article', component: () => import('@/views/article') }, // 内容列表的路由导入注册
       { path: '/articleadd', name: 'articleadd', component: () => import('@/views/articleadd') }, // 发布文章的路由导入注册
       {
-        path: '/articleedit/:aid',
+        path: '/articleedit/:aid', // 修改文章的路由导入注册
         name: 'articleedit',
-        component: () => import('@/views/articleedit') }
+        component: () => import('@/views/articleedit')
+      },
+      { path: '/account', name: 'account', component: () => import('@/views/account') } // 账户管理的路由导入注册
+
     ]
 
   }
