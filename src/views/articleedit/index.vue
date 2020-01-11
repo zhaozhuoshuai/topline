@@ -19,9 +19,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="频道:" prop="channel_id">
-        <el-select v-model="editForm.channel_id" placeholder="请选择" clearable>
-          <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-        </el-select>
+        <Channel :chid='editForm.channel_id' @slt='selectHandler'></Channel>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="editarticle(false)">发布</el-button>
@@ -32,6 +30,7 @@
 </template>
 
 <script>
+import Channel from '@/components/channel.vue'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -42,12 +41,13 @@ export default {
   components: {
     // 富文本编辑器的组件模块做注册
     // 组件使用两种方式：<quillEditor></quillEditor> 或 <quill-editor><quill-editor>
-    quillEditor
+    quillEditor,
+    Channel
+
   },
   // 数据声明定义
   data () {
     return {
-      channelList: [], // 频道列表
       // 添加文章表单数据对象
       editForm: {
         title: '', // 文章标题
@@ -79,8 +79,6 @@ export default {
   created () {
     // 获得指定文章
     this.getArticleById()
-    // 获得频道
-    this.getChannelList()
   },
   computed: {
     aid () {
@@ -90,6 +88,9 @@ export default {
   },
   // 事件注册处理
   methods: {
+    selectHandler (id) {
+      this.editForm.channel_id = id
+    },
     // 获得被修改文章的信息
     getArticleById () {
       let pro = this.$http({
@@ -129,21 +130,6 @@ export default {
             return this.$message.error('发布文章失败' + err)
           })
       })
-    },
-    // 获取真实频道列表数据
-    getChannelList () {
-      let pro = this.$http({
-        url: '/mp/v1_0/channels',
-        method: 'get'
-      })
-      pro
-        .then(result => {
-          // data接收频道数据
-          this.channelList = result.data.data.channels
-        })
-        .catch(err => {
-          return this.$message.error('获得频道失败' + err)
-        })
     }
   }
 }

@@ -13,18 +13,7 @@
           <el-radio v-model="searchForm.status" label="3">审核失败</el-radio>
         </el-form-item>
         <el-form-item label="频道列表:">
-          <el-select
-          v-model="searchForm.channel_id"
-          placeholder="请选择"
-          clearable
-          @change="getArticleList()">
-            <el-option
-              v-for="item in channelList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+          <Channel @slt='selectHandler'></Channel>
         </el-form-item>
         <el-form-item label="时间选择:">
           <el-date-picker
@@ -89,8 +78,13 @@
 </template>
 
 <script>
+// 对频道"独立组件"做导入.注册.使用
+import Channel from '@/components/channel.vue'
 export default {
   name: 'Article',
+  components: {
+    Channel
+  },
   watch: {
     searchForm: {
       handler: function (newV, oldV) {
@@ -117,7 +111,6 @@ export default {
     return {
       articleList: [],
       tot: 0, // 文章总条数
-      channelList: [], // 频道列表
       timetotime: '', // 时间范围临时接收成员
       // 检索表单数据对象
       searchForm: {
@@ -131,12 +124,13 @@ export default {
     }
   },
   created () {
-    // 获得频道
-    this.getChannelList()
     // 获得文章
     this.getArticleList()
   },
   methods: {
+    selectHandler (id) {
+      this.searchForm.channel_id = id
+    },
     // 删除文章
     del (id) {
       // 确认事情
@@ -173,20 +167,6 @@ export default {
     handleCurrentChange (val) {
       this.searchForm.page = val
     },
-    // 获取真实频道列表数据
-    getChannelList () {
-      let pro = this.$http({
-        url: '/mp/v1_0/channels',
-        method: 'get'
-      })
-      pro
-        .then(result => {
-          this.channelList = result.data.data.channels
-        })
-        .catch(err => {
-          return this.$message.error('获得频道失败' + err)
-        })
-    },
     // 获取真实文章信息数据
     getArticleList () {
       let searchData = {}
@@ -204,7 +184,6 @@ export default {
       })
       pro
         .then(result => {
-          console.log(result)
           // data接收文章数据
           this.articleList = result.data.data.results
           // 接收总条数

@@ -11,6 +11,7 @@ const routes = [
   // import (xxx)函数调用//按需导入
   // @符号表示绝对路径名地址
   // index.vue是默认索引文件
+  { path: '/', redirect: '/welcome' },
   { path: '/login', name: 'login', component: () => import('@/views/login') },
   {
     path: '/home',
