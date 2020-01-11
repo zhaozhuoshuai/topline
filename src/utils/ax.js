@@ -1,7 +1,10 @@
 import Vue from 'vue'
 // 导入axios模块
 import axios from 'axios'
+// 导入router模块
 import router from '@/router'
+// 导入数据转换器
+import JSONbig from 'json-bigint'
 // 配置公共根地址(线上地址)
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 // 配置为Vue的(原型)继承成员
@@ -34,3 +37,13 @@ axios.interceptors.response.use(function (response) {
   }
   return Promise.reject(error)
 })
+// 服务器端返回  数据转换器 应用
+axios.defaults.transformResponse = [function (data) {
+  // data的返回形式有两种
+  // 1.实体字符串
+  // 2.空字符串(不能转的)
+  if (data) {
+    return JSONbig.parse(data)
+  }
+  return data
+}]

@@ -63,8 +63,15 @@
           </el-table-column>
           <el-table-column prop="pubdate" label="发布时间"></el-table-column>
           <el-table-column label="操作">
-            <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>
+            <template slot-scope='stData'>
+            <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="$router.push('/articleedit/'+stData.row.id)"
+            >修改</el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" @click="del(stData.row.id)">删除</el-button>
+            </template>
           </el-table-column>
         </el-table>
         <el-pagination
@@ -130,6 +137,32 @@ export default {
     this.getArticleList()
   },
   methods: {
+    // 删除文章
+    del (id) {
+      // 确认事情
+      this.$confirm('确认要删除该文章吗?', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // axios请求服务端闪现删除
+        let pro = this.$http({
+          url: '/mp/v1_0/articles/' + id,
+          method: 'delete'
+        })
+        pro
+          .then(result => {
+            // 删除文章成功
+            this.getArticleList()// 刷新页面
+          })
+          .catch(err => {
+            // 删除文章失败
+            return this.$message.error('获得文章失败' + err)
+          })
+      }).catch(() => {
+
+      })
+    },
     // 分页相关
     // 每条条数变化的回调处理
     handleSizeChange (val) {

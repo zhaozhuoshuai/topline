@@ -18,8 +18,13 @@ const routes = [
     component: () => import('@/views/home'),
     redirect: '/welcome', // 重定向
     children: [
-      { path: '/welcome', name: 'welcome', component: () => import('@/views/welcome') },
-      { path: '/article', name: 'article', component: () => import('@/views/article') }
+      { path: '/welcome', name: 'welcome', component: () => import('@/views/welcome') }, // 首页面的路由导入注册
+      { path: '/article', name: 'article', component: () => import('@/views/article') }, // 内容列表的路由导入注册
+      { path: '/articleadd', name: 'articleadd', component: () => import('@/views/articleadd') }, // 发布文章的路由导入注册
+      {
+        path: '/articleedit/:aid',
+        name: 'articleedit',
+        component: () => import('@/views/articleedit') }
     ]
 
   }

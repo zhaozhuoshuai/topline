@@ -86,7 +86,7 @@ export default {
       },
       loginForm: {
         // 默认数据填入
-        mobile: '13911111111', // 手机号码
+        mobile: '13123456789', // 手机号码
         code: '246810', // 校验码
         xieyi: true // 协议
       }
