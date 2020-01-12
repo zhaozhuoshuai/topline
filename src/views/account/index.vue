@@ -8,7 +8,12 @@
     <!--匿名插槽，卡片主体内容-->
     <div class="text item cardbody">
       <div id="lt">
-        <el-form ref="accountFormRef" :model="accountForm" label-width="100px" :rules="accountFormRules">
+        <el-form
+          ref="accountFormRef"
+          :model="accountForm"
+          label-width="100px"
+          :rules="accountFormRules"
+        >
           <el-form-item label="用户名：" prop="name">
             <el-input v-model="accountForm.name"></el-input>
           </el-form-item>
@@ -26,7 +31,18 @@
           </el-form-item>
         </el-form>
       </div>
-      <div id="rt">头像展示区域</div>
+      <div id="rt">
+        <el-upload
+          action=""
+          :show-file-list="false"
+          :http-request="httpRequest"
+        >
+        用户头像
+        <!--判断是否有图像并展示，否则展示+号-->
+          <img v-if="accountForm.photo" :src="accountForm.photo" class="avatar" width="260" height="260">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </div>
     </div>
   </el-card>
 </template>
@@ -58,7 +74,8 @@ export default {
         name: '', // 名称
         mobile: '', // 手机号码
         email: '', // 邮箱
-        intro: '' // 简介
+        intro: '', // 简介
+        photo: ''// 用户头像
       }
     }
   },
@@ -67,11 +84,41 @@ export default {
     this.getAccountInfo()
   },
   methods: {
+    // 更新上传用户头像
+    // @resouce:被上传头像图片的文件资源信息
+    httpRequest (resouce) {
+      // 通过resouce获得被上传图片对象
+      let pic = resouce.file
+      // 利用axios+FormData 实现图片上传
+      let fd = new FormData()
+      // 把图片对象放到fd对象里面
+      fd.append('photo', pic)
+      // 发axios请求
+      let pro = this.$http({
+        url: '/mp/v1_0/user/photo',
+        method: 'patch',
+        data: fd
+      })
+      pro
+        .then(result => {
+          if (result.data.message === 'OK') {
+            // 把服务器端返回的新的头像获得到，并更新给accountForm.photo成员里边
+            // result.data.data.photo:头像完整请求地址信息
+            this.accountForm.photo = result.data.data.photo
+            this.$message.success('头像更新成功！')
+          }
+        })
+        .catch(err => {
+          return this.$message.error('头像更新失败：' + err)
+        })
+    },
     // 更新账户信息
     editAccount () {
       // 校验表单
       this.$refs.accountFormRef.validate(valid => {
-        if (!valid) { return false }
+        if (!valid) {
+          return false
+        }
         // axios带着更新好的账户信息请求服务器端存储
         // get(获取)/post(添加)/put(修改)/delete(删除)
         // patch(修改)
@@ -122,11 +169,11 @@ export default {
   justify-content: space-between;
   #lt {
     width: 40%;
-    background-color: pink;
+    // background-color: pink;
   }
   #rt {
     width: 30%;
-    background-color: lightgreen;
+    // background-color: lightgreen;
   }
 }
 </style>
