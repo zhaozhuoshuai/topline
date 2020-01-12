@@ -23,7 +23,7 @@
           <el-menu-item index="/articleadd">发布文章</el-menu-item>
           <el-menu-item index="/article">内容列表</el-menu-item>
           <el-menu-item index="2-3">评论列表</el-menu-item>
-          <el-menu-item index="2-4">素材管理</el-menu-item>
+          <el-menu-item index="/material">素材管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="3" :style="{width:isCollapse?'65px':'200px'}">
           <i class="el-icon-document"></i>
@@ -75,23 +75,49 @@
 </template>
 
 <script>
+// 导入公共bus的vue对象
+import bus from '@/utils/bus.js'
 export default {
   name: 'Home',
   // 计算属性
   computed: {
     // 获取账号名称
     name: function () {
-      return JSON.parse(window.sessionStorage.getItem('userinfo')).name
+      return this.tmpname || JSON.parse(window.sessionStorage.getItem('userinfo')).name
     },
     // 获取账号头像
     photo: function () {
-      return JSON.parse(window.sessionStorage.getItem('userinfo')).photo
+      return this.tmpphoto || JSON.parse(window.sessionStorage.getItem('userinfo')).photo
     }
   },
   data () {
     return {
-      isCollapse: false // true折叠  false展开
+      isCollapse: false, // true折叠  false展开
+      tmpname: '', // 临时账户名称
+      tmpphoto: '' // 临时账户头像
     }
+  },
+  created () {
+    // 1. 对  名称  进行更新
+    bus.$on('upAccountName', nm => {
+      // 更新sessionStorage中name的信息拿出来
+      let userinfo = JSON.parse(window.sessionStorage.getItem('userinfo'))
+      // 对userinfo对象的单个name做赋值更新
+      userinfo.name = nm
+      // 把更新好的userinfo再回传存储到sessionStorage
+      window.sessionStorage.setItem('userinfo', JSON.stringify(userinfo))
+      // 更新临时成员tmpname
+      this.tmpname = nm
+    })
+    // 2. 对  名称  进行更新
+    bus.$on('upAccountPhoto', ph => {
+      // 更新sessionStorage中photo的信息
+      let userinfo = JSON.parse(window.sessionStorage.getItem('userinfo'))
+      userinfo.photo = ph
+      window.sessionStorage.setItem('userinfo', JSON.stringify(userinfo))
+      // 更新临时成员tmpphoto
+      this.tmpphoto = ph
+    })
   },
   methods: {
     // 退出系统

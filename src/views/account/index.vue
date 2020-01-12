@@ -48,6 +48,8 @@
 </template>
 
 <script>
+// 导入公共bus的vue对象
+import bus from '@/utils/bus.js'
 export default {
   name: 'Account',
   data () {
@@ -75,7 +77,7 @@ export default {
         mobile: '', // 手机号码
         email: '', // 邮箱
         intro: '', // 简介
-        photo: ''// 用户头像
+        photo: '' // 用户头像
       }
     }
   },
@@ -101,12 +103,13 @@ export default {
       })
       pro
         .then(result => {
-          if (result.data.message === 'OK') {
-            // 把服务器端返回的新的头像获得到，并更新给accountForm.photo成员里边
-            // result.data.data.photo:头像完整请求地址信息
-            this.accountForm.photo = result.data.data.photo
-            this.$message.success('头像更新成功！')
-          }
+          // 成功提示
+          this.$message.success('头像更新成功！')
+          // 把服务器端返回的新的头像获得到，并更新给accountForm.photo成员里边
+          // result.data.data.photo:头像完整请求地址信息
+          this.accountForm.photo = result.data.data.photo
+          // 同步更新给home显示
+          bus.$emit('upAccountPhoto', result.data.data.photo)
         })
         .catch(err => {
           return this.$message.error('头像更新失败：' + err)
@@ -136,6 +139,8 @@ export default {
             // console.log(result)
             // 成功提示
             this.$message.success('更新成功！')
+            // 把名称传递给home,进行同步更新
+            bus.$emit('upAccountName', this.accountForm.name)
           })
           .catch(err => {
             return this.$message.error('更新账户信息失败：' + err)

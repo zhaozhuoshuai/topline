@@ -27,7 +27,8 @@ const routes = [
         name: 'articleedit',
         component: () => import('@/views/articleedit')
       },
-      { path: '/account', name: 'account', component: () => import('@/views/account') } // 账户管理的路由导入注册
+      { path: '/account', name: 'account', component: () => import('@/views/account') }, // 账户管理的路由导入注册
+      { path: '/material', name: 'material', component: () => import('@/views/material') } // 账户管理的路由导入注册
 
     ]
 

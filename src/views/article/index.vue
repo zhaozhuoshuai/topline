@@ -33,13 +33,20 @@
         <el-table :data="articleList" style="width:100%;">
           <el-table-column label="图标">
             <img
-              :src="stData.row.cover.images[0]"
-              alt="没有图标"
-              slot-scope="stData
-            "
-              width="150"
-              height="100"
-            />
+            slot-scope="stData"
+            :src="stData.row.cover.images[0]"
+            alt="没有图标"
+            width="150"
+            height="100"
+            v-if="stData.row.cover.images[0]"
+          >
+          <img
+            src="../../assets/pic.gif"
+            alt="没有图标"
+            width="150"
+            height="100"
+            v-else
+          >
           </el-table-column>
           <el-table-column prop="title" label="标题"></el-table-column>
           <el-table-column prop="status" label="状态">
@@ -86,25 +93,17 @@ export default {
     Channel
   },
   watch: {
-    searchForm: {
-      handler: function (newV, oldV) {
-        this.getArticleList()
-      },
-      deep: true
-    },
     // 被检测的成员:function(newV,oldV)
     // newV:数据变化后的样子
     // oldV:数据变化前的样子
-    timetotime (newval) {
-      if (newval) {
-        this.searchForm.begin_pubdate = newval[0]
-        this.searchForm.end_pubdate = newval[1]
+    timetotime: function (newV, oldV) {
+      if (newV) {
+        this.searchForm.begin_pubdate = newV[0]
+        this.searchForm.end_pubdate = newV[1]
       } else {
         this.searchForm.begin_pubdate = ''
         this.searchForm.end_pubdate = ''
       }
-      // 根据最新的时间范围,获得对应文章信息
-      this.getArticleList()
     }
   },
   data () {
@@ -114,12 +113,11 @@ export default {
       timetotime: '', // 时间范围临时接收成员
       // 检索表单数据对象
       searchForm: {
-        page: 1, // 当前数据记录页码
-        per_page: 10, // 分页数据记录条数(10~50)
         begin_pubdate: '', // 开始时间
         end_pubdate: '', // 结束时间
         channel_id: '', // 频道id
         status: '' // 文章状态,
+
       }
     }
   },
@@ -169,18 +167,9 @@ export default {
     },
     // 获取真实文章信息数据
     getArticleList () {
-      let searchData = {}
-      for (var i in this.searchForm) {
-        // i:代表对象的成员属性名称, status、channel_id、begin_pudate等等
-        if (this.searchForm[i] || this.searchForm[i] === 0) {
-          // 成员值非空
-          searchData[i] = this.searchForm[i]
-        }
-      }
       let pro = this.$http({
         url: '/mp/v1_0/articles',
-        method: 'get',
-        params: searchData
+        method: 'get'
       })
       pro
         .then(result => {
@@ -194,15 +183,9 @@ export default {
         })
     }
   }
+
 }
 </script>
 
 <style lang="less" scoped>
-.box-card {
-  margin-bottom: 15px;
-}
-.el-pagination{
-  margin-top: 15px;
-  text-align: center;
-}
 </style>
